@@ -1,0 +1,33 @@
+[project]
+name = "stator-devtest-nc-ds2"
+version = "0.0.1"
+description = "An example project for building and running pipelines on AI-Workbench."
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = {text = "PROPRIETARY"}
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "kfp[kubernetes]>=2.11.0,<3",
+    "physicsx-flux-pipelines>=0.22.2"
+]
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true
+
+[[tool.uv.index]]
+name = "physicsx"
+url = "https://physicsx.jfrog.io/artifactory/api/pypi/px-pypi-release/simple"
+authenticate = "always"
+
+[tool.flux.project]
+project_name = "stator-devtest-nc-ds2"

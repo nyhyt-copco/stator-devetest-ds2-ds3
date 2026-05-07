@@ -1,0 +1,31 @@
+name: License checker
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-license-check:
+    name: Python License Check
+    uses: PhysicsXLtd/github-workflows/.github/workflows/python-license-check.yaml@v0.28.0
+    secrets: inherit
+    with:
+      python-version: 3.12
+      working-directory: .
+      disallowed-license-types: NetworkCopyleft, StrongCopyleft, Other, Error
+      excluded-dependencies: |
+        kedro-px-datasets: PX package
+        nvidia-.*: NVIDIA dependencies must be acceptable for GPU-utilising repos
+        pedro: PX package
+        physicsx-.*: PX packages

@@ -1,0 +1,36 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  install:default:
+    aliases: [install]
+    desc: Install kubeflow_pipelines python package without dev dependencies
+    preconditions:
+      - sh: test -f ~/.netrc
+        msg: ~/.netrc doesn't exist - use `flux-pipelines auth setup` before running this command.
+    cmds:
+      - uv sync
+
+  clean:
+    desc: Clean the repository
+    vars:
+      FILES:
+        - .cache
+        - .pytest_cache
+        - .mypy_cache
+        - .ruff_cache
+        - htmlcov
+        - .tox
+        - .coverage
+        - coverage.xml
+        - build
+        - dist
+        - "*.egg-info"
+        - "*.pyc"
+        - "*.log"
+        - __pycache__
+    cmds:
+      - for:
+          var: FILES
+        cmd: find . -name {{.ITEM}} -not -path '*/.venv/*' -prune -exec rm -rf {} \;

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["custom_datasets"]
+
+[project]
+name = "custom-datasets"
+version = "0.0.1"
+description = "Dataset configurations for battery project."
+requires-python = ">=3.10,<3.13"
+license = {text = "PROPRIETARY"}
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "pydantic>=2",
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "physicsx-pxd[experimental,filesystems]>=0.20.1,<0.21.0",
+    "physicsx-samples>=0.11.0",
+]
+
+[[tool.uv.index]]
+name = "physicsx"
+url = "https://physicsx.jfrog.io/artifactory/api/pypi/px-pypi-release/simple"
+[tool.uv.sources]
+"physicsx-pxd" = { index = "physicsx"}
+"physicsx-samples" = { index = "physicsx"}

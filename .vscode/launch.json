@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "inputs": [
+    {
+      "id": "componentInput",
+      "type": "promptString",
+      "description": "Enter the name of the component to debug",
+    }
+  ],
+  "configurations": [
+    {
+      "name": "Python Debugger: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug: Component",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/components/${input:componentInput}/run_component.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/components/${input:componentInput}",
+      "python": "${workspaceFolder}/components/${input:componentInput}/.venv/bin/python",
+    }
+  ]
+}
