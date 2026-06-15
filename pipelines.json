@@ -1,3 +1,10 @@
 {
-    "hello_world": "pipelines.hello_world"
+    "hello_world": "pipelines.hello_world",
+    "importer": "pipelines.importer",
+    "preprocessing": "pipelines.preprocessing",
+    "splitting": "pipelines.splitting",
+    "evaluation": "pipelines.evaluation",
+    "modelling": "pipelines.modelling",
+    "optimization": "pipelines.optimization",
+    "hyperparameter_search": "pipelines.hyperparameter_search"
 }

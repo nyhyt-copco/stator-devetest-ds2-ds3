@@ -1,0 +1,20 @@
+version: '1'
+name: modelling
+description: Pipeline that loads split datasets, trains a model, and outputs predictions.
+inputs:
+- modelling_config
+components:
+  modelling:
+    name: modelling
+    image: 585768152950.dkr.ecr.eu-west-2.amazonaws.com/components:modelling-1.2.0
+    profile:
+      memory_request: 32Gi
+      memory_limit: 64Gi
+      cpu_request: '4'
+      cpu_limit: '8'
+      accelerator_type: nvidia.com/gpu
+      accelerator_limit: 1
+      labels:
+        access-ml-pipeline: 'true'
+    mapping:
+      config: modelling_config

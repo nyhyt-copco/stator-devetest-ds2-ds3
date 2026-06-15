@@ -1,0 +1,20 @@
+splitting_config:
+  config:
+    split:
+      split_type: heatflux_validity
+      datasets:
+        train: 0.8
+        validation: 0.1
+        test: 0.1
+    executor: sequential
+    tracking:
+      run_name: heatflux_validity_splitting
+      experiment_name: stator-splitting_01
+  samples:
+    path: /flux/vault/stator/02_preprocessing/stator_preprocessing_ds2_nc/
+  train_samples:
+    path: /flux/vault/stator/03_splitting/stator_splitting_ds2_nc/train/
+  validation_samples:
+    path: /flux/vault/stator/03_splitting/stator_splitting_ds2_nc/validation/
+  test_samples:
+    path: /flux/vault/stator/03_splitting/stator_splitting_ds2_nc/test/

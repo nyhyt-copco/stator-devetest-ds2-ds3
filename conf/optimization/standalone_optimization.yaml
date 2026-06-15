@@ -1,0 +1,100 @@
+optimization_config:
+  optimization_config:
+    evaluator_config:
+      type: layers
+      layers:
+        - type: pickled_model
+          loader_config:
+            # Note: For optimisation, the model should be pre-trained.
+            # You can load from MLflow or a checkpoint by configuring the model path.
+            model_type: pretrained_mlflow
+            config:
+              mlflow_model_run_id: # {{mlflow_model_run_id}}
+              mlflow_uri: http://mlflow:5000
+          prediction_config:
+            uncertainty_quantification: true # use to obtain std values of predictions
+          device: cpu
+      objectives:
+        max_cell_temp_c: data/scalars/max_cell_temp_c_pred  
+        performance: data/scalars/performance_pred  
+        pack_pressure_drop_pa: data/scalars/pack_pressure_drop_pa_pred
+    # Optimization problem definition
+    problem:
+      space:
+        parameters:
+          - name: pack_volume_l
+            type: float
+            lower_bound: 0.0
+            upper_bound: 100.0
+          - name: pack_height_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 500.0
+          - name: pack_length_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 1000.0
+          - name: pack_width_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 500.0
+          - name: busbar_thickness_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 10.0
+          - name: cell_end_coolant_bottom_clearance_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 50.0
+          - name: cell_end_coolant_top_clearance_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 50.0
+          - name: cell_end_overlap_bottom_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 50.0
+          - name: cell_end_overlap_top_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 50.0
+          - name: central_thickness_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 50.0
+          - name: inlet_recess_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 50.0
+          - name: outer_wall_clearance_mm
+            type: float
+            lower_bound: 0.0
+            upper_bound: 50.0
+        constraints: []
+      metrics:
+        objectives:  
+          - name: max_cell_temp_c  
+            to_minimize: true  
+          - name: performance  
+            to_minimize: false  
+        tracking: []  
+        outcome_constraints:  
+          - name: pack_pressure_drop_pa  
+            lower_bound: 0.0  
+            upper_bound: 100.0
+    # Solver configuration
+    solver:
+      solver_type: jmetal
+      solver_options:
+        max_steps: 10
+        n_arms: 20
+
+    log_to_optimizer: false
+    # Logging to optimizer is currently broken due to a kubeflow issue.
+    # Track issue: AIWB-1625
+
+  train_samples:
+    path: /flux/vault/battery-data/gp/03_splitting/battery_splitting/train/
+  optimization_results:
+    overwrite: true
+    path: /flux/vault/battery-data/gp/07_optimization/optimization_results.csv

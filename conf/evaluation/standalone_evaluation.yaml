@@ -1,0 +1,46 @@
+evaluation_config:
+  config:
+    executor: ray
+    post_processing_layers:
+      - type: calculate_field_statistics
+        datablock_fields:
+          coolant_surface:
+            - CoolantMappedAbsolutePressureFieldFunction_pred
+        functions:
+          - mean
+          - min
+          - max
+      - type: calculate_field_statistics
+        datablock_fields:
+          coolant_surface:
+            - CoolantMappedAbsolutePressureFieldFunction
+        functions:
+          - mean
+          - min
+          - max
+    artifacts:
+      - type: scatter_plot
+        datasets:
+          - train
+          - validation
+          - test
+        name: pressure_scatter_plot
+        title: Pressure Scatter Plot
+        x: data/scalars/coolant_surface_CoolantMappedAbsolutePressureFieldFunction_mean
+        y: data/scalars/coolant_surface_CoolantMappedAbsolutePressureFieldFunction_pred_mean
+        metrics: ["r2", "mae", "spearman"]
+    tracking:
+      run_name: evaluation
+      experiment_name: example-battery
+  train_samples:
+    path: /flux/vault/battery-data/04_modelling/battery_modelling_test/train_predictions/
+  validation_samples:
+    path: /flux/vault/battery-data/04_modelling/battery_modelling_test/val_predictions/
+  test_samples:
+    path: /flux/vault/battery-data/04_modelling/battery_modelling_test/test_predictions/
+  train_evaluated_samples:
+    path: /flux/vault/battery-data/05_evaluation/train_evaluated/
+  validation_evaluated_samples:
+    path: /flux/vault/battery-data/05_evaluation/val_evaluated/
+  test_evaluated_samples:
+    path: /flux/vault/battery-data/05_evaluation/test_evaluated/

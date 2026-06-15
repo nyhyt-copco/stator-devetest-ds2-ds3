@@ -1,0 +1,43 @@
+[project]
+name = "splitting"
+version = "1.2.0"
+description = "Templated splitting component."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "custom-splits",
+    "physicsx-quark>=0.2.1,<0.3.0",
+    "physicsx-pxc[experimental,splitting]>=0.31.1,<0.32.0",
+    "physicsx-pxd[experimental,filesystems,legacy-samples]>=0.20.1,<0.21.0",
+    "physicsx-samples>=0.11.0,<0.12.0",
+]
+
+[project.entry-points.quark]
+splitting = "splitting.component:splitting"
+
+[[tool.uv.index]]
+name = "physicsx"
+url = "https://physicsx.jfrog.io/artifactory/api/pypi/pypi/simple"
+authenticate = "always"
+
+# Local path sources allow you to use packages from the libraries/ directory in your project.
+# This enables development of shared code without needing to publish to PyPI.
+[tool.uv.sources]
+custom-splits = { path = "../../libraries/splits", editable = true }
+
+# Issue with uv setup and prerelease versions of dependencies have been reported:
+# https://physicsx.slack.com/archives/C06HMDBQ71N/p1762014165203349
+# https://github.com/PhysicsXLtd/product/issues/5610
+[tool.uv]
+prerelease = "allow"
+index-strategy = "unsafe-best-match"
+required-environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+override-dependencies = ["pillow>=12.1.1"]
+
+[tool.flux.component]
+image = "components:splitting-1.2.0"
+input_artifacts = ["samples"]
+output_artifacts = ["train_samples", "validation_samples", "test_samples"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

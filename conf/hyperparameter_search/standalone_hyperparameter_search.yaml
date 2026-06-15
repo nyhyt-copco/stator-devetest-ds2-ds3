@@ -1,0 +1,123 @@
+hyperparameter_search_config:
+  config:
+    tuner_config:
+      type: raytune
+
+      modelling_config:
+        device: cuda
+        loader:
+          loader_type: lazy
+          cache: false
+        prediction:
+          uncertainty_quantification: false
+        model:
+          model_type: opora
+          config:
+            opora:
+              architecture: default
+              blocks:
+                - block_type: transolver
+                  input_size: 3
+                  output_size: 90
+                  width: 100
+                  n_block: 5
+                  positional_encoding:
+                    block_type: NerfPositionalEncoding
+                    num_frequencies: 5
+                  n_slices: 35
+                  dropout: 0.000008155290473828514
+                  activation: GELU
+                  checkpoint_blocks: true
+                - block_type: MLP
+                  in_channels: 90
+                  out_channels: 1
+                  hidden_channels: [12]
+                  activation: GELU
+                  dropout: 0.0
+            features: [data/coolant_surface/points]
+            target: data/coolant_surface/CoolantMappedAbsolutePressureFieldFunction
+            scalers:
+              data/coolant_surface/points:
+                scaler_type: standard
+              data/coolant_surface/CoolantMappedAbsolutePressureFieldFunction:
+                scaler_type: standard
+            metrics:
+              - sample_metric:
+                  sample_metric_type: mse
+              - sample_metric:
+                  sample_metric_type: mae
+          training:
+            optimizer:
+              optimizer_type: adam
+              learning_rate: 0.001
+            n_epochs: 5
+            random_state: 42
+            loss:
+              loss_type: mse
+            batch_size: 1
+
+      model_search_space_config:
+        parameters:
+          opora.blocks.0.width:
+            sample_type: randint
+            lower: 3
+            upper: 8
+            mapping_name: power_of_two
+          connection_1:                       
+            sample_type: randint
+            lower: 10
+            upper: 90
+            related_parameters:
+              - opora.blocks.0.output_size   
+              - opora.blocks.1.in_channels
+          opora.blocks.1.hidden_channels.0:
+            sample_type: randint
+            lower: 8
+            upper: 65
+
+      training_search_space_config:
+        parameters:
+          optimizer.learning_rate:
+            sample_type: loguniform
+            lower: 1e-5
+            upper: 1e-2
+
+      metrics: loss
+      directions: ["min"]
+      metric_source: train
+      search_algorithm:
+        algorithm_type: optuna
+        seed: 42
+      # ASHA max_t should match the epochs Ray sees (see modelling training n_epochs below); increase both for meaningful early stopping.
+      scheduler:
+        scheduler_type: asha
+        max_t: 1000
+        grace_period: 1000
+        reduction_factor: 4
+        brackets: 10
+      n_trials: 4
+      max_concurrent_trials: 1
+      timeout: 3600
+      results_filename: results_file_name.csv
+      train_fraction: 0.25
+      val_fraction: 0.25
+      resources_per_trial:
+        cpu: 4
+        gpu: 1
+      mlflow:
+        experiment: example-battery
+        run_name: tuning
+
+    tracking:
+      run_name: tuning
+      experiment_name: example-battery
+      log_git_hash: false
+      # DO NOT log model signature
+      # Due to a bug in PXS (tracked by linear ticket: LIBPXS-176) it will result in an uncallable model
+      log_mlflow_model_signature: false
+
+  train_samples:
+    path: /flux/vault/battery-data/03_splitting/battery_splitting/train/
+
+  validation_samples:
+    path: /flux/vault/battery-data/03_splitting/battery_splitting/validation/

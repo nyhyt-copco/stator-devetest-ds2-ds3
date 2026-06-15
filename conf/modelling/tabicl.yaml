@@ -1,0 +1,40 @@
+modelling_config:
+  config:
+    model:
+      model_type: tabicl
+      config:
+        model: "tabicl.TabICLRegressor"
+        target: "data/heatflux_matrix/a_matrix_coefficients"
+        features:
+          - "data/heatflux_matrix/geometry_parameter_a_matrix"
+          - "data/heatflux_matrix/a_matrix_coeffiecient_positions"
+        scalers:
+          data/heatflux_matrix/geometry_parameter_a_matrix: min_max
+          data/heatflux_matrix/a_matrix_coeffiecient_positions: min_max
+          data/heatflux_matrix/a_matrix_coefficients: standard
+    prediction:
+      uncertainty_quantification: true
+    loader:
+      loader_type: lazy
+      cache: false
+    device: cuda
+
+    tracking:
+      run_name: nc_stator_ds2_tabicl
+      experiment_name: stator
+      log_git_hash: false
+      log_mlflow_model_signature: false
+
+
+  train_samples:
+    path: /flux/vault/stator/03_splitting/stator_splitting_ds2_nc/train/
+  validation_samples:
+    path: /flux/vault/stator/03_splitting/stator_splitting_ds2_nc/validation/
+  test_samples:
+    path: /flux/vault/stator/03_splitting/stator_splitting_ds2_nc/test/
+  train_predictions:
+    path: /flux/vault/stator/04_modelling/stator_modelling_nc/train_predictions/
+  validation_predictions:
+    path: /flux/vault/stator/04_modelling/stator_modelling_nc/val_predictions/
+  test_predictions:
+    path: /flux/vault/stator/04_modelling/stator_modelling_nc/test_predictions/

@@ -1,0 +1,21 @@
+version: '1'
+name: importer
+description: Pipeline that imports raw data and outputs as samples.
+inputs:
+- importer_config
+components:
+  importer:
+    name: importer
+    image: 585768152950.dkr.ecr.eu-west-2.amazonaws.com/components:importer-1.2.0
+    profile:
+      memory_request: 16Gi
+      memory_limit: 32Gi
+      cpu_request: '8'
+      cpu_limit: '16'
+      labels:
+        access-ml-pipeline: 'true'
+      env:
+        PXD_EXECUTOR_BACKEND: ray
+        PXD_N_CPUS: '8'
+    mapping:
+      config: importer_config

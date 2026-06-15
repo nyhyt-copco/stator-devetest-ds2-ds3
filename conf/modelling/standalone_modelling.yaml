@@ -1,0 +1,62 @@
+modelling_config:
+  config:
+    device: cuda
+    loader:
+      loader_type: lazy
+      cache: false
+    prediction:
+      uncertainty_quantification: true
+#      calibrate_uncertainty: true
+    model:
+      model_type: opora
+      config:
+        opora:
+          architecture: pct
+          input_size: 3
+          output_size: 1
+          width: 128
+          dropout: 0.05
+        features: [data/coolant_surface/points]
+        target: data/coolant_surface/CoolantMappedAbsolutePressureFieldFunction
+        scalers:
+          data/coolant_surface/points:
+            scaler_type: "standard"
+          data/coolant_surface/CoolantMappedAbsolutePressureFieldFunction:
+            scaler_type: "standard"
+        metrics:
+          - sample_metric:
+              sample_metric_type: "mse"
+          - sample_metric:
+              sample_metric_type: "mae"
+      training:
+        optimizer:
+          optimizer_type: adam
+          learning_rate: 0.001
+        n_epochs: 5
+        random_state: 42
+        loss:
+          loss_type: "mse"
+        batch_scheduler:
+          scheduler_type: one_cycle
+          max_learning_rate: 0.001
+          max_to_final_learning_rate_ratio: 10000
+        batch_size: 1
+    tracking:
+      run_name: modelling
+      experiment_name: example-battery
+      log_git_hash: false
+      # DO NOT log model signature
+      # Due to a bug in PXS (tracked by linear ticket: LIBPXS-176) it will result in an uncallable model
+      log_mlflow_model_signature: false
+  train_samples:
+    path: /flux/vault/battery-data/03_splitting/battery_splitting/train/
+  validation_samples:
+    path: /flux/vault/battery-data/03_splitting/battery_splitting/validation/
+  test_samples:
+    path: /flux/vault/battery-data/03_splitting/battery_splitting/test/
+  train_predictions:
+    path: /flux/vault/battery-data/04_modelling/battery_modelling_test/train_predictions/
+  validation_predictions:
+    path: /flux/vault/battery-data/04_modelling/battery_modelling_test/val_predictions/
+  test_predictions:
+    path: /flux/vault/battery-data/04_modelling/battery_modelling_test/test_predictions/

@@ -1,0 +1,62 @@
+modelling_config:
+  config:
+    device: cuda
+    loader:
+      loader_type: lazy
+      cache: false
+    prediction:
+      uncertainty_quantification: true
+#      calibrate_uncertainty: true
+    model:
+      model_type: gp
+      config:
+        gp_definition:
+          num_features: 3
+          num_tasks: 1
+          independent_tasks: true
+          covar_module:
+            kernel_type: rbf
+            scale: true
+          likelihood:
+            noise_lower_bound: 1.0e-8
+        features: 
+          - data/heatflux_matrix/geometry_parameter_a_matrix
+          - data/heatflux_matrix/a_matrix_coeffiecient_positions
+        target: data/heatflux_matrix/a_matrix_coeffiecient
+        scalers:
+          data/coolant_surface/points:
+            scaler_type: "standard"
+          data/coolant_surface/CoolantMappedAbsolutePressureFieldFunction:
+            scaler_type: "standard"
+      training:
+        optimizer:
+          optimizer_type: adam
+          learning_rate: 0.001
+        n_epochs: 50
+        random_state: 42
+        loss:
+          loss_type: "mse"
+        batch_scheduler:
+          scheduler_type: one_cycle
+          max_learning_rate: 0.001
+          max_to_final_learning_rate_ratio: 10000
+        batch_size: 1
+    tracking:
+      run_name: modelling
+      experiment_name: stator-gp-nc-01
+      log_git_hash: false
+      # DO NOT log model signature
+      # Due to a bug in PXS (tracked by linear ticket: LIBPXS-176) it will result in an uncallable model
+      log_mlflow_model_signature: false
+  train_samples:
+    path: /flux/vault/stator/03_splitting/stator_splitting_ds2_nc/train/
+  validation_samples:
+    path: /flux/vault/stator/03_splitting/stator_splitting_ds2_nc/validation/
+  test_samples:
+    path: /flux/vault/stator/03_splitting/stator_splitting_ds2_nc/test/
+  train_predictions:
+    path: /flux/vault/stator/04_modelling/stator_modelling_nc/train_predictions/
+  validation_predictions:
+    path: /flux/vault/stator/04_modelling/stator_modelling_nc/val_predictions/
+  test_predictions:
+    path: /flux/vault/stator/04_modelling/stator_modelling_nc/test_predictions/

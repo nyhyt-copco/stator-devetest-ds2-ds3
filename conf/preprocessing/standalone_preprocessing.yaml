@@ -1,0 +1,17 @@
+preprocessing_config:
+  config:
+    executor: sequential
+    layers:
+      - type: escape_names
+        remove_pattern: '[^a-zA-Z0-9._-]'
+      - type: compute_a_matrix_coefficients_layer
+        input_datablock: heatflux_matrix  
+    tracking:
+      run_name: preprocessing
+      experiment_name: stator-ds2-nc
+  samples:
+    path: /flux/vault/stator/01_loading/stator_loading_ds2_nc/
+  preprocessed_samples:
+    path: /flux/vault/stator/02_preprocessing/stator_preprocessing_ds2_nc/
+    overwrite: true
+

@@ -1,0 +1,20 @@
+importer_config:
+  config:
+    handle_unknown_samples: ignore
+    datasets:
+      heatflux_matrix:
+        type: pandas_dataset
+        path: /flux/vault/stator/00_sim_data/ds2/
+        glob: "**/heatFluxMatrix.csv"
+        pattern: "(sample_[0-9]+)/output/"
+      stator_scalars:
+        type: pandas_object
+        path: /flux/vault/stator/00_sim_data/ds2/doe_samples_n1000_fixed.csv
+        load_args:
+          sep: ","
+          engine: python
+        sample_id_column: "sample_id"
+      
+  samples:
+    path: /flux/vault/stator/01_loading/stator_loading_ds2_nc/
+    overwrite: true

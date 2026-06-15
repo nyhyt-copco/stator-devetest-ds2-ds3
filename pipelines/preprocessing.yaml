@@ -1,0 +1,21 @@
+version: '1'
+name: preprocessing
+description: Pipeline that loads samples, preprocesses them, and outputs preprocessed
+  samples.
+inputs:
+- preprocessing_config
+components:
+  preprocessing:
+    name: preprocessing
+    image: 585768152950.dkr.ecr.eu-west-2.amazonaws.com/components:preprocessing-1.2.0
+    profile:
+      memory_request: 16Gi
+      memory_limit: 32Gi
+      cpu_request: '8'
+      cpu_limit: '16'
+      labels:
+        access-ml-pipeline: 'true'
+      selectors:
+        kubernetes.io/arch: amd64
+    mapping:
+      config: preprocessing_config
