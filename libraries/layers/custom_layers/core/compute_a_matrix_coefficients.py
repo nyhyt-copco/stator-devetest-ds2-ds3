@@ -41,6 +41,11 @@ class ComputeAMatrixCoefficients(Layer):
         self.input_datablock = input_datablock
         self.n_components = n_components
 
+    def geometry_constraints(self, subset,LOWER_BOUND, UPPER_BOUND) -> bool:
+     
+        # Check if any element violates the constraint
+        return any(x < LOWER_BOUND or x > UPPER_BOUND for x in subset)
+
     def __call__(self, sample: SampleT) -> SampleT:
         datablock = sample.get(self.input_datablock)
         # datablock is loaded from the H5 file
@@ -125,6 +130,7 @@ class ComputeAMatrixCoefficients(Layer):
             "missing_heatflux": np.array([False]),
             "high_q_error": np.array([high_q_error]),
             "high_a_matrix_error": np.array([high_a_matrix_error]),
+            "geometry_constraints_violated": np.array([self.geometry_constraints(geom_array[14:18], 0.3, 1.835)])
         }
         flags = sample.get("flags")
         if flags is None:
